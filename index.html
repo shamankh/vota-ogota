@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urna da Gota · escolha o nome</title>
+<style>
+:root{
+  --corpo:#D9D3C5; --corpo2:#C7C0B0; --borda:#A79F8D; --tela:#F4F6F2; --tinta:#14181F; --tinta2:#4B5361;
+  --tecla:#1E2228; --tecla2:#2C3139; --branco:#F7F7F2; --corrige:#E8833A; --confirma:#2FA35B;
+  --agua:#2E8BC9; --fundo:#0E2233; --fundo2:#163650; --ouro:#F2B544; --perigo:#C8412B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:radial-gradient(circle at 30% 0%,var(--fundo2),var(--fundo) 70%);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--tinta);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:18px 16px 0}
+h1.topo{color:#EAF4FB;font-size:22px;font-weight:800;letter-spacing:.3px;text-align:center}
+.topo small{display:block;font-size:14px;font-weight:500;color:#A9C4D8;margin-top:2px}
+
+/* ---------- a urna ---------- */
+.urna{margin-top:14px;width:min(1080px,100%);background:linear-gradient(180deg,var(--corpo),var(--corpo2));border:3px solid var(--borda);border-radius:22px;
+  box-shadow:0 18px 40px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.5);display:grid;grid-template-columns:1.55fr 1fr;gap:22px;padding:22px}
+.marca{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:800;color:#5D5646;letter-spacing:1.5px;text-transform:uppercase;margin:-6px 4px -8px}
+.marca .led{display:inline-block;width:10px;height:10px;border-radius:50%;background:#7a7a7a;margin-right:6px;vertical-align:-1px}
+.marca .led.on{background:#39d36b;box-shadow:0 0 8px #39d36b}
+
+.tela{background:var(--tela);border:10px solid #2A2E35;border-radius:10px;min-height:430px;position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 2px #cfd5cc;display:flex;flex-direction:column}
+.tela .conteudo{flex:1;padding:18px 22px;display:flex;flex-direction:column}
+.cab{font-size:15px;color:var(--tinta2);font-weight:700;letter-spacing:.5px}
+.cargo{font-size:30px;font-weight:900;margin:6px 0 14px;text-align:center;letter-spacing:1px}
+.linha-num{display:flex;align-items:center;gap:16px;font-size:20px;font-weight:700}
+.caixa-num{width:58px;height:70px;border:3px solid var(--tinta);display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;background:#fff}
+.caixa-num.pisca{animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{background:#d8dde5}}
+.cand{display:flex;gap:22px;margin-top:16px;align-items:flex-start}
+.cand .info{flex:1;font-size:19px;line-height:1.55}
+.cand .info b{font-size:30px;display:block;letter-spacing:.5px}
+.cand .origem{font-size:16px;color:var(--tinta2);margin-top:6px}
+.foto{width:170px;height:200px;border:2px solid #9aa3ad;background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.foto svg{width:150px;height:180px}
+.aviso-grande{font-size:36px;font-weight:900;text-align:center;margin-top:18px;letter-spacing:1px}
+.rodape-tela{border-top:2px solid var(--tinta);padding:10px 22px 12px;font-size:15px;line-height:1.55;background:#eef1ec}
+.rodape-tela b{font-weight:900}
+.fim{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--tela)}
+.fim .palavra{font-size:120px;font-weight:900;letter-spacing:10px}
+.fim .sub{font-size:18px;color:var(--tinta2);margin-top:6px}
+.bloqueada{position:absolute;inset:0;background:var(--tela);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.bloqueada .cadeado{font-size:56px}
+.bloqueada h2{font-size:28px;margin-top:6px}
+.bloqueada p{font-size:17px;color:var(--tinta2);margin-top:8px;max-width:460px}
+
+/* teclado */
+.teclado{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.teclado .titulo-tec{text-align:center;font-weight:800;color:#5D5646;font-size:13px;letter-spacing:2px}
+.numeros{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px;background:#1A1D22;border-radius:12px}
+.tecla{border:none;border-radius:8px;cursor:pointer;font-weight:900;user-select:none;transition:transform .06s, filter .1s}
+.tecla:active{transform:translateY(2px)}
+.tecla:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.num{background:linear-gradient(180deg,var(--tecla2),var(--tecla));color:#fff;font-size:38px;height:92px;box-shadow:0 4px 0 #000}
+.num.zero{grid-column:2}
+.acoes{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:10px}
+.acao{height:62px;font-size:15px;letter-spacing:.5px;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+.branco{background:var(--branco);color:#111;border:1px solid #bbb}
+.corrige{background:var(--corrige);color:#1b0f04}
+.confirma{background:var(--confirma);color:#fff;font-size:17px}
+.tecla[disabled]{filter:grayscale(.6) brightness(.8);cursor:not-allowed}
+
+/* barra do professor */
+.prof{width:min(1080px,100%);margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center}
+.btn{border:none;border-radius:10px;padding:12px 18px;font-weight:800;font-size:15px;cursor:pointer}
+.btn.lib{background:var(--ouro);color:#2a1a00}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sec{background:#24435C;color:#EAF4FB}
+.btn.perigo{background:var(--perigo);color:#fff}
+.contagem{color:#CFE2F0;font-size:15px}
+.contagem b{color:#fff}
+
+/* cola: os candidatos */
+.cola{width:min(1080px,100%);margin-top:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px 16px}
+.cola h3{color:#EAF4FB;font-size:16px;margin-bottom:10px}
+.cola-grade{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.card{background:#F4F6F2;border-radius:12px;padding:8px 8px 10px;text-align:center}
+.card svg{width:74px;height:88px}
+.card .n{font-size:24px;font-weight:900;color:var(--agua);line-height:1}
+.card .nome{font-size:16px;font-weight:900;margin-top:2px}
+.card .o{font-size:12px;color:var(--tinta2);margin-top:3px;line-height:1.3}
+
+footer{width:100%;margin-top:22px;padding:14px 16px;background:rgba(0,0,0,.25);display:flex;justify-content:center;gap:12px;flex-wrap:wrap;align-items:center;color:#9FB8CB;font-size:13px}
+
+/* janelas */
+.fundo-modal{position:fixed;inset:0;background:rgba(4,10,18,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.fundo-modal.on{display:flex}
+.modal{background:#fff;border-radius:16px;padding:22px 24px;width:min(460px,100%);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.modal h2{font-size:22px}
+.modal p{margin-top:8px;color:var(--tinta2);font-size:16px;line-height:1.45}
+.modal input{margin-top:14px;width:100%;font-size:26px;padding:10px 12px;border:2px solid #c9ced6;border-radius:10px;letter-spacing:6px;text-align:center}
+.modal .erro{color:var(--perigo);font-weight:700;margin-top:8px;min-height:20px}
+.modal .bts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+
+/* resultados */
+.resultado{position:fixed;inset:0;background:radial-gradient(circle at 50% 0%,#1c4566,#0B1C2B 70%);z-index:40;display:none;overflow:auto;padding:24px 16px}
+.resultado.on{display:block}
+.res-box{max-width:980px;margin:0 auto;color:#EAF4FB}
+.res-box h2{font-size:30px;text-align:center}
+.res-box .sub{text-align:center;color:#A9C4D8;margin-top:4px}
+.vencedor{margin:18px auto 8px;background:#F4F6F2;color:var(--tinta);border-radius:20px;padding:16px 22px;display:flex;gap:20px;align-items:center;max-width:640px;box-shadow:0 0 0 4px var(--ouro)}
+.vencedor svg{width:120px;height:144px;flex:none}
+.vencedor .rot{font-size:14px;font-weight:800;color:#8a6a10;letter-spacing:1.5px}
+.vencedor .nm{font-size:44px;font-weight:900;line-height:1.05}
+.vencedor .vt{font-size:18px;color:var(--tinta2)}
+.barras{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.barra{display:grid;grid-template-columns:52px 160px 1fr 120px;gap:12px;align-items:center}
+.barra svg{width:46px;height:55px}
+.barra .nm{font-weight:800;font-size:18px}
+.barra .trilho{background:rgba(255,255,255,.12);height:30px;border-radius:4px;overflow:hidden}
+.barra .ench{height:100%;background:var(--agua);border-radius:0 4px 4px 0}
+.barra.top .ench{background:var(--ouro)}
+.barra .vt{font-size:16px;text-align:right}
+.barra .vt b{font-size:20px}
+.extras{margin-top:14px;display:flex;gap:16px;justify-content:center;color:#CFE2F0;flex-wrap:wrap}
+.res-bts{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .urna{grid-template-columns:1fr}
+  .cola-grade{grid-template-columns:repeat(3,1fr)}
+  .barra{grid-template-columns:40px 110px 1fr 90px}
+  .fim .palavra{font-size:80px}
+}
+</style>
+</head>
+<body>
+
+<h1 class="topo">💧 Urna da Gota — qual será o nome da protagonista?<small>A Inspiração da Gota · votação da turma</small></h1>
+
+<div class="urna">
+  <div class="marca"><span><span class="led" id="led"></span><span id="estado-led">URNA BLOQUEADA</span></span><span>URNA DA GOTA · 6º ANO</span></div>
+
+  <div class="tela" aria-live="polite">
+    <div class="conteudo" id="conteudo"></div>
+    <div class="rodape-tela" id="rodape-tela"></div>
+    <div class="fim" id="fim" hidden><div class="palavra">FIM</div><div class="sub">Obrigado! Seu voto foi registrado.</div></div>
+    <div class="bloqueada" id="bloqueada">
+      <div class="cadeado">🔒</div>
+      <h2 id="bloq-tit">Aguardando o professor</h2>
+      <p id="bloq-txt">O professor libera a urna para cada aluno votar.</p>
+    </div>
+  </div>
+
+  <div class="teclado">
+    <div class="titulo-tec">TECLADO</div>
+    <div class="numeros" id="numeros"></div>
+    <div class="acoes">
+      <button class="tecla acao branco" id="t-branco">BRANCO</button>
+      <button class="tecla acao corrige" id="t-corrige">CORRIGE</button>
+      <button class="tecla acao confirma" id="t-confirma">CONFIRMA</button>
+    </div>
+  </div>
+</div>
+
+<div class="prof">
+  <button class="btn lib" id="b-liberar">▶ Iniciar nova votação (próximo aluno)</button>
+  <span class="contagem">Votos registrados: <b id="total">0</b></span>
+</div>
+
+<div class="cola">
+  <h3>Candidatos — digite o número na urna</h3>
+  <div class="cola-grade" id="cola"></div>
+</div>
+
+<footer>
+  <span>Os votos ficam guardados só neste navegador, neste computador.</span>
+  <button class="btn perigo" id="b-encerrar">⏹ Encerrar votação</button>
+</footer>
+
+<!-- janela de confirmação / senha -->
+<div class="fundo-modal" id="modal"><div class="modal">
+  <h2 id="m-tit"></h2><p id="m-txt"></p>
+  <input id="m-senha" type="password" inputmode="numeric" maxlength="6" autocomplete="off" hidden>
+  <div class="erro" id="m-erro"></div>
+  <div class="bts"><button class="btn sec" id="m-nao">Cancelar</button><button class="btn lib" id="m-sim">Confirmar</button></div>
+</div></div>
+
+<!-- resultados -->
+<div class="resultado" id="resultado"><div class="res-box">
+  <h2>🏆 Resultado da votação</h2>
+  <div class="sub" id="r-sub"></div>
+  <div id="r-venc"></div>
+  <div class="barras" id="r-barras"></div>
+  <div class="extras" id="r-extras"></div>
+  <div class="res-bts">
+    <button class="btn sec" id="r-csv">⬇ Baixar resultado (.csv)</button>
+    <button class="btn sec" id="r-reabrir">↺ Reabrir votação</button>
+    <button class="btn perigo" id="r-zerar">🗑 Zerar todos os votos</button>
+  </div>
+</div></div>
+
+<script>
+/* ===================== candidatos ===================== */
+const CAND = {
+  1:{nome:'Brotá',      origem:'Ela brota de dentro da rocha, na Fase 0.',               cor:'#5DB3E8', extra:'broto'},
+  2:{nome:'Meandra',    origem:'Vem de meandro, a curva do rio da Fase 1.3.',            cor:'#3E9BD6', extra:'meandro'},
+  3:{nome:'Nascentina', origem:'Vem de nascente, onde ela vê a luz pela primeira vez.',  cor:'#6CC7EE', extra:'brilho'},
+  4:{nome:'Lençolina',  origem:'Vem do lençol freático: ela mora embaixo da terra.',     cor:'#2F7FB8', extra:'camadas'},
+  5:{nome:'Gotaré',     origem:'Gota + maré: sai da serra e chega ao mar.',              cor:'#2AA9C9', extra:'onda'},
+  6:{nome:'Ciclina',    origem:'Vem de ciclo: evapora, chove e volta à serra.',          cor:'#4AA0E0', extra:'ciclo'}
+};
+const SENHA = '777';
+const CHAVE = 'urna-gota-v2';
+
+/* desenho da gota (inspirado na protagonista do jogo) com um enfeite de cada nome */
+function gotaSVG(n){
+  const c = CAND[n], cor = c.cor, id = 'g'+n+Math.random().toString(36).slice(2,6);
+  let extra = '';
+  if(c.extra==='broto') extra = `<path d="M60 22 C60 10 60 6 60 2" stroke="#3E8E3A" stroke-width="3" fill="none"/><ellipse cx="52" cy="6" rx="8" ry="4" fill="#5DBB4F" transform="rotate(-25 52 6)"/><ellipse cx="68" cy="7" rx="8" ry="4" fill="#5DBB4F" transform="rotate(25 68 7)"/><path d="M30 128 L44 118 L58 126 L74 116 L92 128 Z" fill="#8C8F96"/>`;
+  if(c.extra==='meandro') extra = `<path d="M24 96 C40 86 48 108 62 98 S86 86 98 96" stroke="#1D5E95" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/>`;
+  if(c.extra==='brilho') extra = `<g fill="#F2C94C"><path d="M60 0 L64 10 L74 12 L64 15 L60 25 L56 15 L46 12 L56 10 Z" transform="translate(0 -2) scale(.85) translate(10 0)"/><circle cx="34" cy="20" r="3"/><circle cx="88" cy="22" r="3"/></g>`;
+  if(c.extra==='camadas') extra = `<rect x="18" y="120" width="84" height="6" rx="3" fill="#8B5A35"/><rect x="18" y="128" width="84" height="6" rx="3" fill="#A97445"/><rect x="18" y="136" width="84" height="6" rx="3" fill="#C99A5B"/>`;
+  if(c.extra==='onda') extra = `<path d="M14 126 q10 -8 20 0 t20 0 t20 0 t20 0 t20 0" stroke="#1F7FA6" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M44 30 h32 l-4 -10 h-24 z" fill="#fff" stroke="#1F4E79" stroke-width="2"/><rect x="40" y="28" width="40" height="5" rx="2" fill="#1F4E79"/>`;
+  if(c.extra==='ciclo') extra = `<path d="M22 50 A42 42 0 0 1 98 50" stroke="#F2B544" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M98 50 l-9 -4 l3 10 z" fill="#F2B544"/><g fill="#fff" stroke="#c9d6e2"><circle cx="30" cy="18" r="9"/><circle cx="42" cy="14" r="11"/><circle cx="54" cy="19" r="8"/></g>`;
+  return `<svg viewBox="0 0 120 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gota ${c.nome}">
+  <defs><radialGradient id="${id}" cx="38%" cy="42%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="${cor}"/><stop offset="1" stop-color="#14507F"/></radialGradient></defs>
+  ${c.extra==='ciclo'||c.extra==='brilho'||c.extra==='broto'?extra:''}
+  <path d="M60 24 C74 46 92 62 92 86 A32 32 0 0 1 28 86 C28 62 46 46 60 24 Z" fill="url(#${id})" stroke="#DDF2FF" stroke-width="2"/>
+  <ellipse cx="45" cy="70" rx="5" ry="10" fill="#fff" opacity=".7" transform="rotate(25 45 70)"/>
+  <ellipse cx="50" cy="86" rx="4.5" ry="6" fill="#0D1117"/><ellipse cx="70" cy="86" rx="4.5" ry="6" fill="#0D1117"/>
+  <circle cx="51.6" cy="84" r="1.6" fill="#fff"/><circle cx="71.6" cy="84" r="1.6" fill="#fff"/>
+  <ellipse cx="41" cy="96" rx="5" ry="3" fill="#FF8FA3" opacity=".55"/><ellipse cx="79" cy="96" rx="5" ry="3" fill="#FF8FA3" opacity=".55"/>
+  <path d="M52 99 Q60 107 68 99" stroke="#0D1117" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+  ${c.extra==='ciclo'||c.extra==='brilho'||c.extra==='broto'?'':extra}
+</svg>`;
+}
+
+/* ===================== estado guardado no navegador ===================== */
+function novoEstado(){ return {votos:{1:0,2:0,3:0,4:0,5:0,6:0}, branco:0, nulo:0, encerrada:false, inicio:new Date().toISOString(), log:[]}; }
+let E = novoEstado();
+try { const s = localStorage.getItem(CHAVE); if(s){ const o = JSON.parse(s); if(o && o.votos) E = Object.assign(novoEstado(), o); } } catch(e) {}
+function guardar(){ try { localStorage.setItem(CHAVE, JSON.stringify(E)); } catch(e) {} }
+
+/* ===================== som (gerado na hora) ===================== */
+let AC = null;
+function som(freqs, dur=.09, gap=.0){
+  try{ AC = AC || new (window.AudioContext||window.webkitAudioContext)(); let t = AC.currentTime;
+    freqs.forEach(f => { const o = AC.createOscillator(), g = AC.createGain(); o.type='square'; o.frequency.value=f;
+      g.gain.setValueAtTime(.06,t); g.gain.exponentialRampToValueAtTime(.0001,t+dur); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+dur); t += dur+gap; });
+  }catch(e){}
+}
+const bip = () => som([1100], .07);
+const somFim = () => som([880,988,1175,1319,1175,1319], .09, .015);
+
+/* ===================== a urna ===================== */
+const $ = id => document.getElementById(id);
+let liberada = false, digito = '', modo = 'num'; // num | branco
+
+function desenharTela(){
+  const conteudo = $('conteudo'), rod = $('rodape-tela');
+  if(modo === 'branco'){
+    conteudo.innerHTML = `<div class="cab">SEU VOTO PARA</div><div class="cargo">NOME DA GOTA</div><div class="aviso-grande">VOTO EM BRANCO</div>`;
+    rod.innerHTML = `Aperte a tecla:<br><b>CONFIRMA</b> para <b>CONFIRMAR</b> este voto<br><b>CORRIGE</b> para <b>REINICIAR</b> este voto`;
+    return;
+  }
+  let corpo = `<div class="cab">SEU VOTO PARA</div><div class="cargo">NOME DA GOTA</div>
+    <div class="linha-num">Número: <div class="caixa-num ${digito?'':'pisca'}">${digito}</div></div>`;
+  if(digito){
+    const c = CAND[digito];
+    if(c) corpo += `<div class="cand"><div class="info">Nome:<b>${c.nome}</b><div class="origem">${c.origem}</div></div><div class="foto">${gotaSVG(+digito)}</div></div>`;
+    else corpo += `<div class="aviso-grande" style="margin-top:28px">NÚMERO ERRADO</div><div class="aviso-grande" style="font-size:28px;margin-top:6px">VOTO NULO</div>`;
+    rod.innerHTML = `Aperte a tecla:<br><b>CONFIRMA</b> para <b>CONFIRMAR</b> este voto<br><b>CORRIGE</b> para <b>REINICIAR</b> este voto`;
+  } else {
+    rod.innerHTML = `Digite o <b>número</b> do nome escolhido (de <b>1 a 6</b>) no teclado ao lado.<br>Se não quiser escolher nenhum, aperte <b>BRANCO</b>.`;
+  }
+  conteudo.innerHTML = corpo;
+}
+
+function travar(titulo, texto){
+  liberada = false; digito = ''; modo = 'num';
+  $('bloqueada').hidden = false; $('bloq-tit').textContent = titulo; $('bloq-txt').textContent = texto;
+  $('led').classList.remove('on'); $('estado-led').textContent = E.encerrada ? 'VOTAÇÃO ENCERRADA' : 'URNA BLOQUEADA';
+  document.querySelectorAll('.tecla').forEach(b => b.disabled = true);
+  $('b-liberar').disabled = E.encerrada;
+  $('total').textContent = totalVotos();
+}
+function liberar(){
+  liberada = true; digito = ''; modo = 'num';
+  $('bloqueada').hidden = true; $('fim').hidden = true;
+  $('led').classList.add('on'); $('estado-led').textContent = 'PRONTA PARA VOTAR';
+  document.querySelectorAll('.tecla').forEach(b => b.disabled = false);
+  $('b-liberar').disabled = true;
+  desenharTela();
+}
+function totalVotos(){ return Object.values(E.votos).reduce((a,b)=>a+b,0) + E.branco + E.nulo; }
+
+function tecla(d){ if(!liberada || modo==='branco' || digito) return; bip(); digito = String(d); desenharTela(); }
+function corrige(){ if(!liberada) return; bip(); digito = ''; modo = 'num'; desenharTela(); }
+function branco(){ if(!liberada || digito) return; bip(); modo = 'branco'; desenharTela(); }
+function confirma(){
+  if(!liberada) return;
+  if(modo !== 'branco' && !digito){ bip(); return; }        /* nada digitado: não confirma */
+  let tipo;
+  if(modo === 'branco'){ E.branco++; tipo = 'branco'; }
+  else if(CAND[digito]){ E.votos[digito]++; tipo = digito; }
+  else { E.nulo++; tipo = 'nulo'; }
+  E.log.push({t: new Date().toISOString(), v: tipo}); guardar();
+  liberada = false; somFim();
+  document.querySelectorAll('.tecla').forEach(b => b.disabled = true);
+  $('fim').hidden = false; $('led').classList.remove('on'); $('estado-led').textContent = 'VOTO CONCLUÍDO';
+  $('total').textContent = totalVotos();
+  setTimeout(() => { $('fim').hidden = true; travar('Voto concluído ✔', 'Chame o próximo aluno. O professor inicia a nova votação no botão abaixo da urna.'); }, 2600);
+}
+
+/* teclado na tela */
+[1,2,3,4,5,6].forEach(d => { const b = document.createElement('button'); b.className = 'tecla num'; b.textContent = d;
+  b.onclick = () => tecla(d); $('numeros').appendChild(b); });
+$('t-branco').onclick = branco; $('t-corrige').onclick = corrige; $('t-confirma').onclick = confirma;
+/* teclado físico também funciona */
+addEventListener('keydown', e => {
+  if($('modal').classList.contains('on') || $('resultado').classList.contains('on')) return;
+  if(/^[1-6]$/.test(e.key)) tecla(+e.key);
+  else if(e.key === 'Enter'){ e.preventDefault(); confirma(); }
+  else if(e.key === 'Backspace' || e.key === 'Delete') corrige();
+  else if(e.key.toLowerCase() === 'b') branco();
+});
+
+/* ===================== janelas de confirmação ===================== */
+let acaoSim = null;
+function janela(tit, txt, {senha=false, botao='Confirmar'}={}, aoConfirmar){
+  $('m-tit').textContent = tit; $('m-txt').textContent = txt; $('m-erro').textContent = '';
+  $('m-senha').hidden = !senha; $('m-senha').value = ''; $('m-sim').textContent = botao;
+  acaoSim = aoConfirmar; $('modal').classList.add('on');
+  setTimeout(() => (senha ? $('m-senha') : $('m-sim')).focus(), 60);
+}
+function fecharJanela(){ $('modal').classList.remove('on'); acaoSim = null; }
+$('m-nao').onclick = fecharJanela;
+$('m-sim').onclick = () => { if(acaoSim) acaoSim(); };
+$('m-senha').addEventListener('keydown', e => { if(e.key === 'Enter') $('m-sim').click(); });
+
+/* iniciar nova votação: duas confirmações */
+$('b-liberar').onclick = () => {
+  if(E.encerrada) return;
+  janela('Iniciar nova votação?', 'Confirme que o próximo aluno já está na frente do computador.', {botao:'Sim, é o próximo aluno'}, () => {
+    janela('Liberar a urna agora?', 'Segunda confirmação: a urna será liberada para UM voto.', {botao:'Liberar urna ▶'}, () => { fecharJanela(); liberar(); });
+  });
+};
+
+/* encerrar votação: senha */
+function pedirSenha(tit, txt, botao, depois){
+  janela(tit, txt, {senha:true, botao}, () => {
+    if($('m-senha').value === SENHA){ fecharJanela(); depois(); }
+    else { $('m-erro').textContent = 'Senha incorreta.'; $('m-senha').value = ''; $('m-senha').focus(); }
+  });
+}
+$('b-encerrar').onclick = () => pedirSenha('Encerrar votação', 'Digite a senha do professor para encerrar e ver o resultado.', 'Encerrar e ver resultado', () => {
+  E.encerrada = true; E.fim = new Date().toISOString(); guardar(); travar('Votação encerrada', 'O resultado está na tela do professor.'); mostrarResultado();
+});
+
+/* ===================== resultado ===================== */
+function mostrarResultado(){
+  const total = totalVotos(), validos = Object.values(E.votos).reduce((a,b)=>a+b,0);
+  const ordem = Object.keys(CAND).sort((a,b) => E.votos[b]-E.votos[a]);
+  const max = Math.max(1, ...Object.values(E.votos));
+  const topo = ordem.filter(n => E.votos[n] === E.votos[ordem[0]] && E.votos[n] > 0);
+  const pct = v => validos ? Math.round(v/validos*100) : 0;
+  $('r-sub').textContent = `${total} voto${total===1?'':'s'} no total · ${validos} válido${validos===1?'':'s'}`;
+  if(!topo.length) $('r-venc').innerHTML = `<div class="vencedor"><div><div class="rot">AINDA SEM VOTOS VÁLIDOS</div><div class="vt">Reabra a votação para continuar.</div></div></div>`;
+  else if(topo.length > 1) $('r-venc').innerHTML = `<div class="vencedor"><div><div class="rot">EMPATE</div><div class="nm" style="font-size:32px">${topo.map(n=>CAND[n].nome).join(' × ')}</div><div class="vt">${E.votos[topo[0]]} votos cada · sugestão: segundo turno só com estes nomes</div></div></div>`;
+  else { const n = topo[0]; $('r-venc').innerHTML = `<div class="vencedor">${gotaSVG(+n)}<div><div class="rot">O NOME ESCOLHIDO É</div><div class="nm">${CAND[n].nome}</div><div class="vt">${E.votos[n]} votos · ${pct(E.votos[n])}% dos votos válidos</div><div class="vt" style="font-size:15px;margin-top:4px">${CAND[n].origem}</div></div></div>`; }
+  $('r-barras').innerHTML = ordem.map(n => `<div class="barra ${topo.includes(n)?'top':''}">${gotaSVG(+n)}<div class="nm">${n} · ${CAND[n].nome}</div>
+    <div class="trilho"><div class="ench" style="width:${E.votos[n]/max*100}%"></div></div><div class="vt"><b>${E.votos[n]}</b> · ${pct(E.votos[n])}%</div></div>`).join('');
+  $('r-extras').innerHTML = `<span>Brancos: <b>${E.branco}</b></span><span>Porcentagens sobre os votos válidos</span>`;
+  $('resultado').classList.add('on');
+}
+$('r-csv').onclick = () => {
+  const linhas = [['numero','nome','votos']].concat(Object.keys(CAND).map(n => [n, CAND[n].nome, E.votos[n]]), [['', 'branco', E.branco]]);
+  const csv = '﻿' + linhas.map(l => l.join(';')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = 'resultado-nome-da-gota.csv'; a.click();
+};
+$('r-reabrir').onclick = () => pedirSenha('Reabrir votação', 'Os votos já registrados continuam guardados.', 'Reabrir', () => {
+  E.encerrada = false; guardar(); $('resultado').classList.remove('on'); travar('Aguardando o professor', 'O professor libera a urna para cada aluno votar.');
+});
+$('r-zerar').onclick = () => pedirSenha('Zerar todos os votos', 'Atenção: apaga TODOS os votos deste computador e começa do zero.', 'Zerar tudo', () => {
+  janela('Tem certeza?', 'Esta ação não pode ser desfeita.', {botao:'Sim, zerar'}, () => {
+    E = novoEstado(); guardar(); fecharJanela(); $('resultado').classList.remove('on'); travar('Aguardando o professor', 'Votação zerada. O professor libera a urna para cada aluno votar.');
+  });
+});
+
+/* ===================== cola dos candidatos e início ===================== */
+$('cola').innerHTML = Object.keys(CAND).map(n => `<div class="card">${gotaSVG(+n)}<div class="n">${n}</div><div class="nome">${CAND[n].nome}</div><div class="o">${CAND[n].origem}</div></div>`).join('');
+if(E.encerrada){ travar('Votação encerrada', 'O resultado está na tela do professor.'); mostrarResultado(); }
+else travar('Aguardando o professor', 'O professor libera a urna para cada aluno votar.');
+</script>
+</body>
+</html>
